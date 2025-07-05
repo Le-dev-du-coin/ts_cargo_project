@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="min-h-screen flex">
+    <!-- Left Section: Image and Marketing Slogan -->
+    <div class="hidden lg:flex w-1/2 bg-cover bg-center items-center justify-center p-10" style="background-image: url('{% static 'images/login_bg.jpg' %}');">
+        <div class="text-white text-center">
+            <img src="{% static 'images/logo.png' %}" alt="Logo" class="mx-auto h-24 w-auto mb-4">
+            <h1 class="text-5xl font-bold mb-4">TS-Cargo</h1>
+            <p class="text-2xl font-light mb-6">Votre partenaire de confiance pour la logistique</p>
+            <p class="text-lg">Simplifiez vos expéditions de la Chine au Mali avec notre service rapide et sécurisé.</p>
+        </div>
+    </div>
+
+    <!-- Right Section: Auth Form -->
+    <div class="w-full lg:w-1/2 flex items-center justify-center bg-white p-8">
+        <div class="max-w-md w-full">
+            {% block auth_content %}
+                {# Le contenu spécifique de la page d'authentification viendra ici #}
+            {% endblock %}
+        </div>
+    </div>
+</div>
+{% endblock %}

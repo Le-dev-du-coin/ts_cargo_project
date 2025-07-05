@@ -1,0 +1,32 @@
+{% extends 'layouts/auth_layout.html' %}
+
+{% block auth_content %}
+    <div class="text-center mb-8">
+        <h1 class="text-4xl font-extrabold text-gray-900">Vérification OTP</h1>
+        <p class="text-gray-600 mt-2">Un code OTP a été envoyé au numéro <span class="font-semibold text-indigo-600">{{ phone_number }}</span>. Veuillez le saisir ci-dessous.</p>
+    </div>
+    <form method="post" class="space-y-6">
+        {% csrf_token %}
+        <div>
+            <label for="otp_code" class="block text-sm font-medium text-gray-700">Code OTP</label>
+            <div class="mt-1">
+                <input type="text" name="otp_code" id="otp_code" class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Ex: 123456" required>
+            </div>
+        </div>
+        <div>
+            <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                Vérifier
+            </button>
+        </div>
+        {% if messages %}
+            <ul class="messages mt-4 text-center">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }} text-red-500 text-sm"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </form>
+    <div class="mt-6 text-center">
+        <p class="text-sm text-gray-600"><a href="{% url 'client_login' %}" class="font-medium text-indigo-600 hover:text-indigo-500">Retour à la connexion</a></p>
+    </div>
+{% endblock %}

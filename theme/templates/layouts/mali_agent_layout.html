@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="flex h-screen bg-gray-200 font-sans">
+    <!-- Sidebar Agent Mali -->
+    <div class="w-64 bg-gray-900 text-white flex flex-col">
+        <div class="px-8 py-6 border-b border-gray-700 flex justify-center items-center">
+            <img src="{% static 'images/logo.png' %}" alt="TS-Cargo Logo" class="h-16 w-auto">
+        </div>
+        <nav class="flex-1 px-6 py-4">
+            <a href="{% url 'ts_company:mali_agent_dashboard' %}" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700">
+                <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                Tableau de Bord
+            </a>
+            
+            <p class="text-xs text-gray-500 uppercase mt-4 mb-2 px-4">Actions</p>
+            
+            <a href="{% url 'ts_company:mali_manage_lots' %}" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700">
+                <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
+                Gérer les Lots
+            </a>
+            <a href="{% url 'ts_company:mali_inventory' %}" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700">
+                <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                Inventaire Colis
+            </a>
+            <a href="{% url 'ts_company:lot_inventory_mali' %}" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700">
+                <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2H7a2 2 0 00-2 2v2m7-7h.01"></path></svg>
+                Inventaire Lots
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+        <header class="bg-white shadow-sm p-4 flex justify-between items-center">
+            <div>
+                <!-- Potentiellement un champ de recherche global ici -->
+            </div>
+            <div class="flex items-center">
+                <span class="mr-4 text-gray-600">Bonjour, <strong>{{ request.user.first_name|default:request.user.phone_number }}</strong></span>
+                <a href="{% url 'authentication:logout' %}" class="text-red-500 hover:text-red-700 font-semibold">Déconnexion</a>
+            </div>
+        </header>
+        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
+            {% block mali_agent_content %}
+                {# Le contenu spécifique de la page agent Mali viendra ici #}
+            {% endblock %}
+        </main>
+    </div>
+</div>
+{% endblock %}

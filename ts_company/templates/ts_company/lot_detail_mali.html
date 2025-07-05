@@ -1,0 +1,68 @@
+{% extends 'layouts/mali_agent_layout.html' %}
+
+{% block mali_agent_content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-6 text-gray-800">Détails du Lot: {{ lot.numero_lot }}</h1>
+    <p class="text-gray-700">Statut: {{ lot.get_status_display }}</p>
+    <p class="text-gray-700">Créé le: {{ lot.date_creation|date:"d M Y H:i" }}</p>
+    {% if lot.date_expedition %}
+        <p class="text-gray-700">Expédié le: {{ lot.date_expedition|date:"d M Y H:i" }}</p>
+    {% endif %}
+
+    <h2 class="text-xl font-bold mb-4 mt-8">Colis dans ce Lot</h2>
+    <div class="bg-white shadow-md rounded-xl overflow-hidden mb-10">
+        <table class="min-w-full leading-normal">
+            <thead>
+                <tr class="bg-gray-100 text-gray-600 uppercase text-sm font-semibold border-b border-gray-200">
+                    <th class="py-3 px-6 text-left">Numéro de Suivi</th>
+                    <th class="py-3 px-6 text-left">Client</th>
+                    <th class="py-3 px-6 text-left">Poids (Kg)</th>
+                    <th class="py-3 px-6 text-left">Méthode</th>
+                    <th class="py-3 px-6 text-left">Prix Estimé</th>
+                    <th class="py-3 px-6 text-left">Statut</th>
+                    <th class="py-3 px-6 text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="text-gray-700 text-sm">
+                {% for colis in colis_in_lot %}
+                <tr class="border-b border-gray-200 hover:bg-gray-50">
+                    <td class="py-4 px-6 whitespace-nowrap">{{ colis.tracking_number }}</td>
+                    <td class="py-4 px-6 whitespace-nowrap">{{ colis.client.first_name }} {{ colis.client.last_name }} ({{ colis.client.phone_number }})</td>
+                    <td class="py-4 px-6">{{ colis.poids|floatformat:0 }}</td>
+                    <td class="py-4 px-6 whitespace-nowrap">{{ colis.get_shipping_method_display }}</td>
+                    <td class="py-4 px-6 whitespace-nowrap">{{ colis.estimated_price|floatformat:0 }} F CFA</td>
+                    <td class="py-4 px-6 whitespace-nowrap">
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold 
+                            {% if colis.status == 'EN_ATTENTE_CHINE' %}bg-yellow-100 text-yellow-800
+                            {% elif colis.status == 'EN_TRANSIT' %}bg-purple-100 text-purple-800
+                            {% elif colis.status == 'ARRIVE_MALI' %}bg-blue-100 text-blue-800
+                            {% else %}bg-green-100 text-green-800{% endif %}">
+                            {{ colis.get_status_display }}
+                        </span>
+                    </td>
+                    <td class="py-4 px-6 text-center">
+                        {% if colis.status != 'RECEPTIONNE' %}
+                        <a href="{% url 'ts_company:update_colis_receptionne' colis.pk %}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-3 rounded text-xs">
+                            Marquer comme Réceptionné
+                        </a>
+                        {% else %}
+                        <span class="text-gray-500 text-xs">Déjà Réceptionné</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="py-4 px-6 text-center text-gray-500">Aucun colis dans ce lot.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="mt-8">
+        <a href="{% url 'ts_company:mali_manage_lots' %}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+            Retour à la Gestion des Lots
+        </a>
+    </div>
+</div>
+{% endblock %}

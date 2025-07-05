@@ -1,0 +1,51 @@
+{% extends 'layouts/admin_layout.html' %}
+
+{% block main_content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-6 text-gray-800">Gestion des Lots</h1>
+
+    <div class="bg-white shadow-md rounded-xl overflow-hidden mb-10">
+        <table class="min-w-full leading-normal">
+            <thead>
+                <tr class="bg-gray-100 text-gray-600 uppercase text-sm font-semibold border-b border-gray-200">
+                    <th class="py-3 px-6 text-left">Numéro de Lot</th>
+                    <th class="py-3 px-6 text-left">Agent Créateur</th>
+                    <th class="py-3 px-6 text-center">Date de Création</th>
+                    <th class="py-3 px-6 text-center">Statut</th>
+                    <th class="py-3 px-6 text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="text-gray-700 text-sm">
+                {% for lot in lots %}
+                <tr class="border-b border-gray-200 hover:bg-gray-50">
+                    <td class="py-4 px-6 whitespace-nowrap">{{ lot.numero_lot }}</td>
+                    <td class="py-4 px-6 whitespace-nowrap">{{ lot.agent_createur.first_name }} {{ lot.agent_createur.last_name }} ({{ lot.agent_createur.phone_number }})</td>
+                    <td class="py-4 px-6 text-center">{{ lot.date_creation|date:"d M Y H:i" }}</td>
+                    <td class="py-4 px-6 text-center">
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold 
+                            {% if lot.status == 'OUVERT' %}bg-green-100 text-green-800
+                            {% else %}bg-red-100 text-red-800{% endif %}">
+                            {{ lot.get_status_display }}
+                        </span>
+                    </td>
+                    <td class="py-4 px-6 text-center">
+                        <div class="flex items-center justify-center space-x-3">
+                            <a href="{% url 'ts_company:lot_admin_detail' lot.pk %}" class="text-blue-500 hover:text-blue-700 transform hover:scale-110 transition duration-150 ease-in-out" title="Voir Détail">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                            </a>
+                            <a href="{% url 'ts_company:delete_lot' lot.pk %}" class="text-red-500 hover:text-red-700 transform hover:scale-110 transition duration-150 ease-in-out" title="Supprimer">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="py-4 px-6 text-center text-gray-500">Aucun lot trouvé.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

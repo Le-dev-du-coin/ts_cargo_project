@@ -1,0 +1,153 @@
+{% extends 'layouts/client_layout.html' %}
+
+{% block client_content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white rounded-lg shadow-md p-6 flex items-center justify-between">
+            <div class="flex items-center">
+                <div class="bg-yellow-100 rounded-full p-3 mr-4">
+                    <svg class="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
+                <div>
+                    <p class="text-gray-500 text-sm">En attente en Chine</p>
+                    <h2 class="text-2xl font-bold text-gray-800">{{ colis_en_attente_chine_count }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-lg shadow-md p-6 flex items-center justify-between">
+            <div class="flex items-center">
+                <div class="bg-purple-100 rounded-full p-3 mr-4">
+                    <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+                </div>
+                <div>
+                    <p class="text-gray-500 text-sm">En transit</p>
+                    <h2 class="text-2xl font-bold text-gray-800">{{ colis_en_transit_count }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-lg shadow-md p-6 flex items-center justify-between">
+            <div class="flex items-center">
+                <div class="bg-blue-100 rounded-full p-3 mr-4">
+                    <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                </div>
+                <div>
+                    <p class="text-gray-500 text-sm">Arrivé au Mali</p>
+                    <h2 class="text-2xl font-bold text-gray-800">{{ colis_arrive_mali_count }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-lg shadow-md p-6 flex items-center justify-between">
+            <div class="flex items-center">
+                <div class="bg-green-100 rounded-full p-3 mr-4">
+                    <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
+                <div>
+                    <p class="text-gray-500 text-sm">Réceptionné</p>
+                    <h2 class="text-2xl font-bold text-gray-800">{{ colis_receptionne_count }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-bold mb-4">Mes Colis</h2>
+        <div class="flex border-b border-gray-200">
+            <button class="tab-button py-2 px-4 text-gray-600 hover:text-blue-600 focus:outline-none border-b-2 border-transparent hover:border-blue-500 rounded-t-lg" data-tab="aerien">Aérien <i class="fas fa-plane ml-2"></i></button>
+            <button class="tab-button py-2 px-4 text-gray-600 hover:text-blue-600 focus:outline-none border-b-2 border-transparent hover:border-blue-500" data-tab="maritime">Maritime <i class="fas fa-ship ml-2"></i></button>
+        </div>
+
+        <div id="aerien" class="tab-content mt-4">
+            <h3 class="text-lg font-semibold mb-2">Colis Aériens</h3>
+            <div class="overflow-x-auto">
+                <table class="min-w-full leading-normal">
+                    <thead>
+                        <tr class="bg-gray-100 text-gray-600 uppercase text-sm font-semibold border-b border-gray-200">
+                            <th class="py-3 px-6 text-left">Numéro de Suivi</th>
+                            <th class="py-3 px-6 text-left">Statut</th>
+                            <th class="py-3 px-6 text-left">Prix Estimé</th>
+                            <th class="py-3 px-6 text-left">Date Enregistrement</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-gray-700 text-sm">
+                        {% for colis in colis_aerien %}
+                        <tr class="border-b border-gray-200 hover:bg-gray-50">
+                            <td class="py-4 px-6 whitespace-nowrap">{{ colis.tracking_number }}</td>
+                            <td class="py-4 px-6 whitespace-nowrap">{{ colis.get_status_display }}</td>
+                            <td class="py-4 px-6 whitespace-nowrap">{{ colis.estimated_price|floatformat:0 }} F CFA</td>
+                            <td class="py-4 px-6 whitespace-nowrap">{{ colis.date_creation|date:"d M Y" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="py-4 px-6 text-center text-gray-500">Aucun colis aérien.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="maritime" class="tab-content mt-4 hidden">
+            <h3 class="text-lg font-semibold mb-2">Colis Maritimes</h3>
+            <div class="overflow-x-auto">
+                <table class="min-w-full leading-normal">
+                    <thead>
+                        <tr class="bg-gray-100 text-gray-600 uppercase text-sm font-semibold border-b border-gray-200">
+                            <th class="py-3 px-6 text-left">Numéro de Suivi</th>
+                            <th class="py-3 px-6 text-left">Statut</th>
+                            <th class="py-3 px-6 text-left">Prix Estimé</th>
+                            <th class="py-3 px-6 text-left">Date Enregistrement</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-gray-700 text-sm">
+                        {% for colis in colis_maritime %}
+                        <tr class="border-b border-gray-200 hover:bg-gray-50">
+                            <td class="py-4 px-6 whitespace-nowrap">{{ colis.tracking_number }}</td>
+                            <td class="py-4 px-6 whitespace-nowrap">{{ colis.get_status_display }}</td>
+                            <td class="py-4 px-6 whitespace-nowrap">{{ colis.estimated_price|floatformat:0 }} F CFA</td>
+                            <td class="py-4 px-6 whitespace-nowrap">{{ colis.date_creation|date:"d M Y" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="py-4 px-6 text-center text-gray-500">Aucun colis maritime.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const tab = button.dataset.tab;
+
+                tabButtons.forEach(btn => {
+                    btn.classList.remove('text-blue-600', 'font-semibold', 'border-blue-500');
+                    btn.classList.add('text-gray-600', 'hover:text-blue-600', 'border-transparent');
+                });
+                button.classList.add('text-blue-600', 'font-semibold', 'border-blue-500');
+                button.classList.remove('text-gray-600', 'hover:text-blue-600', 'border-transparent');
+
+                tabContents.forEach(content => {
+                    if (content.id === tab) {
+                        content.classList.remove('hidden');
+                    } else {
+                        content.classList.add('hidden');
+                    }
+                });
+            });
+        });
+
+        // Set initial active tab
+        tabButtons[0].click();
+    });
+</script>
+{% endblock %}

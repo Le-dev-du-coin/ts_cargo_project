@@ -1,0 +1,300 @@
+{% extends 'layouts/agent_layout.html' %}
+
+{% block agent_content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-2xl font-bold mb-4">Détails du Lot: {{ lot.numero_lot }}</h1>
+    <p class="text-gray-700">Statut: {{ lot.get_status_display }}</p>
+    <p class="text-gray-700">Créé le: {{ lot.date_creation|date:"d M Y H:i" }}</p>
+    {% if lot.date_expedition %}
+        <p class="text-gray-700">Expédié le: {{ lot.date_expedition|date:"d M Y H:i" }}</p>
+    {% endif %}
+
+    <h2 class="text-xl font-bold mb-4 mt-8">Enregistrer un Colis dans ce Lot</h2>
+    <div class="bg-white shadow-md rounded my-6 p-6 max-w-lg mx-auto">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% for field in form %}
+                {% if field.name == 'client' %}
+                <div class="mb-4">
+                    <label for="id_client_phone" class="block text-gray-700 text-sm font-bold mb-2">Numéro de Téléphone Client</label>
+                    <input type="text" id="id_client_phone" name="client_phone" list="client_suggestions" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Saisir le numéro de téléphone" autocomplete="off">
+                    <datalist id="client_suggestions"></datalist>
+                    <input type="hidden" id="id_client" name="client" value="">
+                    <p id="client_full_name" class="text-gray-600 text-sm mt-2"></p>
+                    {% for error in field.errors %}
+                        <p class="text-red-500 text-xs italic">{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% elif field.name == 'shipping_method' %}
+                <div class="mb-4">
+                    <label for="{{ field.id_for_label }}" class="block text-gray-700 text-sm font-bold mb-2">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.help_text %}
+                        <p class="text-gray-600 text-xs italic">{{ field.help_text }}</p>
+                    {% endif %}
+                    {% for error in field.errors %}
+                        <p class="text-red-500 text-xs italic">{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% elif field.name == 'poids' %}
+                <div id="field-poids" class="mb-4">
+                    <label for="{{ field.id_for_label }}" class="block text-gray-700 text-sm font-bold mb-2">{{ field.label }}</label>
+                    {{ field }}
+                    {% for error in field.errors %}
+                        <p class="text-red-500 text-xs italic">{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% elif field.name == 'longueur' %}
+                <div id="field-longueur" class="mb-4">
+                    <label for="{{ field.id_for_label }}" class="block text-gray-700 text-sm font-bold mb-2">{{ field.label }}</label>
+                    {{ field }}
+                    {% for error in field.errors %}
+                        <p class="text-red-500 text-xs italic">{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% elif field.name == 'largeur' %}
+                <div id="field-largeur" class="mb-4">
+                    <label for="{{ field.id_for_label }}" class="block text-gray-700 text-sm font-bold mb-2">{{ field.label }}</label>
+                    {{ field }}
+                    {% for error in field.errors %}
+                        <p class="text-red-500 text-xs italic">{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% elif field.name == 'hauteur' %}
+                <div id="field-hauteur" class="mb-4">
+                    <label for="{{ field.id_for_label }}" class="block text-gray-700 text-sm font-bold mb-2">{{ field.label }}</label>
+                    {{ field }}
+                    {% for error in field.errors %}
+                        <p class="text-red-500 text-xs italic">{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% elif field.name == 'description' %}
+                <div class="mb-4">
+                    <label for="{{ field.id_for_label }}" class="block text-gray-700 text-sm font-bold mb-2">{{ field.label }}</label>
+                    {{ field }}
+                    {% for error in field.errors %}
+                        <p class="text-red-500 text-xs italic">{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% elif field.name == 'delivery_address' %}
+                <div class="mb-4">
+                    <label for="{{ field.id_for_label }}" class="block text-gray-700 text-sm font-bold mb-2">{{ field.label }}</label>
+                    {{ field }}
+                    {% for error in field.errors %}
+                        <p class="text-red-500 text-xs italic">{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% elif field.name == 'image' %}
+                <div class="mb-4">
+                    <label for="{{ field.id_for_label }}" class="block text-gray-700 text-sm font-bold mb-2">{{ field.label }}</label>
+                    {{ field }}
+                    {% for error in field.errors %}
+                        <p class="text-red-500 text-xs italic">{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="mb-4">
+                    <label for="{{ field.id_for_label }}" class="block text-gray-700 text-sm font-bold mb-2">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.help_text %}
+                        <p class="text-gray-600 text-xs italic">{{ field.help_text }}</p>
+                    {% endif %}
+                    {% for error in field.errors %}
+                        <p class="text-red-500 text-xs italic">{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endfor %}
+            <div class="flex items-center justify-between">
+                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                    Enregistrer le Colis
+                </button>
+                <a href="{% url 'ts_company:china_agent_dashboard' %}" class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800">
+                    Retour au Dashboard
+                </a>
+            </div>
+            {% if messages %}
+                <ul class="messages mt-4">
+                    {% for message in messages %}
+                        <li{% if message.tags %} class="{{ message.tags }} text-red-500 text-xs italic"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </form>
+    </div>
+
+    <h2 class="text-xl font-bold mb-4 mt-8">Colis dans ce Lot</h2>
+    <div class="bg-white shadow-md rounded my-6">
+        <table class="min-w-full table-auto">
+            <thead>
+                <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                    <th class="py-3 px-6 text-left">Numéro de Suivi</th>
+                    <th class="py-3 px-6 text-left">Client</th>
+                    <th class="py-3 px-6 text-left">P(Kg)/V(m3)</th>
+                    <th class="py-3 px-6 text-left">Méthode</th>
+                    <th class="py-3 px-6 text-left">Prix Estimé</th>
+                    <th class="py-3 px-6 text-left">Statut</th>
+                </tr>
+            </thead>
+            <tbody class="text-gray-600 text-sm font-light">
+                {% for colis in colis_in_lot %}
+                <tr class="border-b border-gray-200 hover:bg-gray-100">
+                    <td class="py-3 px-6 text-left whitespace-nowrap">{{ colis.tracking_number }}</td>
+                    <td class="py-3 px-6 text-left">{{ colis.client.phone_number }}</td>
+                    <td class="py-3 px-6 text-left">{{ colis.poids }}</td>
+                    <td class="py-3 px-6 text-left">{{ colis.get_shipping_method_display }}</td>
+                    <td class="py-3 px-6 text-left">{{ colis.estimated_price|floatformat:0 }} F CFA</td>
+                    <td class="py-3 px-6 text-left">{{ colis.get_status_display }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="py-3 px-6 text-center">Aucun colis dans ce lot.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const shippingMethod = document.getElementById('id_shipping_method');
+    const poidsField = document.getElementById('field-poids');
+    const longueurField = document.getElementById('field-longueur');
+    const largeurField = document.getElementById('field-largeur');
+    const hauteurField = document.getElementById('field-hauteur');
+
+    function toggleFields() {
+        if (shippingMethod.value === 'MARITIME') {
+            poidsField.style.display = 'none';
+            longueurField.style.display = 'block';
+            largeurField.style.display = 'block';
+            hauteurField.style.display = 'block';
+        } else {
+            poidsField.style.display = 'block';
+            longueurField.style.display = 'none';
+            largeurField.style.display = 'none';
+            hauteurField.style.display = 'none';
+        }
+    }
+
+    // Initial check
+    toggleFields();
+
+    // Event listener for shipping method
+    shippingMethod.addEventListener('change', toggleFields);
+
+    // --- Client Search and Address Pre-fill ---
+    const clientPhoneInput = document.getElementById('id_client_phone');
+    const clientIdInput = document.getElementById('id_client');
+    const clientSuggestionsDatalist = document.getElementById('client_suggestions');
+    const clientFullNameDisplay = document.getElementById('client_full_name');
+    const deliveryAddressInput = document.getElementById('id_delivery_address');
+
+    let debounceTimer;
+
+    function fetchClientSuggestions(query) {
+        if (query.length < 2) { // Only search if query is at least 2 characters
+            clientSuggestionsDatalist.innerHTML = '';
+            return;
+        }
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+            fetch(`/ts_company/api/search_clients/?q=${query}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.text(); // Get raw text to debug JSON parsing
+                })
+                .then(text => {
+                    console.log('Raw response for client suggestions:', text);
+                    const data = JSON.parse(text);
+                    clientSuggestionsDatalist.innerHTML = '';
+                    data.clients.forEach(client => {
+                        const option = document.createElement('option');
+                        option.value = client.phone_number; // Display phone number in input
+                        option.setAttribute('data-client-id', client.id);
+                        option.setAttribute('data-full-name', client.full_name);
+                        option.textContent = `${client.full_name} (${client.phone_number})`; // Display full name and phone in datalist
+                        clientSuggestionsDatalist.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching client suggestions:', error));
+        }, 300); // Debounce for 300ms
+    }
+
+    function updateClientInfo(selectedPhoneNumber) {
+        const selectedOption = Array.from(clientSuggestionsDatalist.options).find(
+            option => option.value === selectedPhoneNumber
+        );
+
+        if (selectedOption) {
+            const clientId = selectedOption.getAttribute('data-client-id');
+            const fullName = selectedOption.getAttribute('data-full-name');
+            clientIdInput.value = clientId;
+            clientFullNameDisplay.textContent = `Client: ${fullName}`;
+            fetchClientAddress(clientId);
+        } else {
+            clientIdInput.value = '';
+            clientFullNameDisplay.textContent = '';
+            deliveryAddressInput.value = '';
+        }
+    }
+
+    function fetchClientAddress(clientId) {
+        if (clientId) {
+            fetch(`/ts_company/api/get_client_address/${clientId}/`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.address) {
+                        deliveryAddressInput.value = data.address;
+                    } else {
+                        deliveryAddressInput.value = ''; // Clear if no address found
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching client address:', error);
+                    deliveryAddressInput.value = ''; // Clear on error
+                });
+        } else {
+            deliveryAddressInput.value = ''; // Clear if no client selected
+        }
+    }
+
+    clientPhoneInput.addEventListener('input', function() {
+        fetchClientSuggestions(this.value);
+    });
+
+    clientPhoneInput.addEventListener('change', function() {
+        // When user selects from datalist or types a full match
+        updateClientInfo(this.value);
+    });
+
+    // Initial check if a client is pre-selected (e.g., on form error)
+    if (clientIdInput.value) {
+        // If there's an initial client ID, fetch its full name and address
+        fetch(`/ts_company/api/get_client_address/${clientIdInput.value}/`)
+            .then(response => response.json())
+            .then(data => {
+                // Assuming get_client_address can also return full name if needed, or fetch separately
+                // For now, just pre-fill address
+                if (data.address) {
+                    deliveryAddressInput.value = data.address;
+                }
+            })
+            .catch(error => console.error('Error fetching initial client address:', error));
+
+        // You might need another API call to get the full name if not available in get_client_address
+        // For simplicity, let's assume the form submission will handle displaying the name if valid.
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,128 @@
+{% extends 'layouts/admin_layout.html' %}
+
+{% block main_content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-6 text-gray-800">Gérer les Tarifs d'Expédition</h1>
+    <div id="messageContainer" class="mb-4"></div>
+
+    <div class="bg-white shadow-md rounded-xl p-6 mb-8">
+        <form id="shippingPricesForm" method="post">
+            {% csrf_token %}
+            <table class="min-w-full leading-normal">
+                <thead>
+                    <tr class="bg-gray-100 text-gray-600 uppercase text-sm font-semibold border-b border-gray-200">
+                        <th class="py-3 px-6 text-left">Méthode d'Expédition</th>
+                        <th class="py-3 px-6 text-left">Prix par Unité (F CFA)</th>
+                        <th class="py-3 px-6 text-left">Unité</th>
+                        <th class="py-3 px-6 text-left">Min. Charge (Unité)</th>
+                        <th class="py-3 px-6 text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="text-gray-700 text-sm">
+                    {% for price_obj in shipping_prices %}
+                    <tr class="border-b border-gray-200 hover:bg-gray-50" data-id="{{ price_obj.pk }}">
+                        <td class="py-4 px-6 whitespace-nowrap">{{ price_obj.get_method_display }}</td>
+                        <td class="py-4 px-6">
+                            <span class="price-display">{{ price_obj.price_unit|floatformat:0 }}</span>
+                            <input type="number" step="1" min="0" name="price_unit_{{ price_obj.pk }}" value="{{ price_obj.price_unit|floatformat:0 }}" class="price-input hidden block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        </td>
+                        <td class="py-4 px-6 whitespace-nowrap">{{ price_obj.get_unit_type_display }}</td>
+                        <td class="py-4 px-6">
+                            <span class="min-charge-display">{{ price_obj.min_charge_weight|floatformat:0 }}</span>
+                            <input type="number" step="1" min="0" name="min_charge_weight_{{ price_obj.pk }}" value="{{ price_obj.min_charge_weight|floatformat:0 }}" class="min-charge-input hidden block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        </td>
+                        <td class="py-4 px-6 text-center">
+                            <button type="button" class="edit-button bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded text-xs">
+                                Modifier
+                            </button>
+                            <button type="submit" class="save-button bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-3 rounded text-xs hidden">
+                                Enregistrer
+                            </button>
+                            <button type="button" class="cancel-button bg-gray-500 hover:bg-gray-700 text-white font-bold py-1 px-3 rounded text-xs hidden ml-2">
+                                Annuler
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('shippingPricesForm');
+        const messageContainer = document.getElementById('messageContainer');
+
+        function showMessage(message, type) {
+            messageContainer.innerHTML = `
+                <div class="bg-${type === 'success' ? 'green' : 'red'}-100 border border-${type === 'success' ? 'green' : 'red'}-400 text-${type === 'success' ? 'green' : 'red'}-700 px-4 py-3 rounded relative" role="alert">
+                    <strong class="font-bold">${type === 'success' ? 'Succès!' : 'Erreur!'}</strong>
+                    <span class="block sm:inline">${message}</span>
+                    <span class="absolute top-0 bottom-0 right-0 px-4 py-3 cursor-pointer opacity-75 hover:opacity-100" onclick="this.parentElement.style.display='none';">
+                        <svg class="fill-current h-6 w-6 ${type === 'success' ? 'text-green-500' : 'text-red-500'}" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 2.65a1.2 1.2 0 1 1-1.697-1.697l2.65-2.651-2.65-2.651a1.2 1.2 0 0 1 1.697-1.697l2.651 2.65 2.651-2.65a1.2 1.2 0 0 1 0 1.697z"/></svg>
+                    </span>
+                </div>
+            `;
+            setTimeout(() => {
+                messageContainer.innerHTML = '';
+            }, 8000); // Message disappears after 8 seconds
+        }
+
+        form.querySelectorAll('.edit-button').forEach(button => {
+            button.addEventListener('click', function() {
+                const row = this.closest('tr');
+                row.querySelector('.price-display').classList.add('hidden');
+                row.querySelector('.min-charge-display').classList.add('hidden');
+                row.querySelector('.price-input').classList.remove('hidden');
+                row.querySelector('.min-charge-input').classList.remove('hidden');
+                this.classList.add('hidden');
+                row.querySelector('.save-button').classList.remove('hidden');
+                row.querySelector('.cancel-button').classList.remove('hidden');
+            });
+        });
+
+        form.querySelectorAll('.cancel-button').forEach(button => {
+            button.addEventListener('click', function() {
+                const row = this.closest('tr');
+                row.querySelector('.price-display').classList.remove('hidden');
+                row.querySelector('.min-charge-display').classList.remove('hidden');
+                row.querySelector('.price-input').classList.add('hidden');
+                row.querySelector('.min-charge-input').classList.add('hidden');
+                row.querySelector('.edit-button').classList.remove('hidden');
+                this.classList.add('hidden');
+                row.querySelector('.save-button').classList.add('hidden');
+            });
+        });
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+            const url = form.action;
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showMessage(data.message, 'success');
+                    location.reload(); // Reload to show updated values
+                } else {
+                    showMessage(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showMessage('Une erreur est survenue lors de la mise à jour des tarifs.', 'error');
+            });
+        });
+    });
+</script>
+{% endblock %}

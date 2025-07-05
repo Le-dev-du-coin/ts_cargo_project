@@ -1,0 +1,52 @@
+{% extends 'layouts/agent_layout.html' %}
+
+{% block agent_content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-6 text-gray-800">Gestion de vos Lots</h1>
+
+    <div class="bg-white shadow-md rounded-xl overflow-hidden mb-10">
+        <table class="min-w-full leading-normal">
+            <thead>
+                <tr class="bg-gray-100 text-gray-600 uppercase text-sm font-semibold border-b border-gray-200">
+                    <th class="py-3 px-6 text-left">Numéro de Lot</th>
+                    <th class="py-3 px-6 text-center">Date de Création</th>
+                    <th class="py-3 px-6 text-center">Statut</th>
+                    <th class="py-3 px-6 text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="text-gray-700 text-sm">
+                {% for lot in lots %}
+                <tr class="border-b border-gray-200 hover:bg-gray-50">
+                    <td class="py-4 px-6 whitespace-nowrap">{{ lot.numero_lot }}</td>
+                    <td class="py-4 px-6 text-center">{{ lot.date_creation|date:"d M Y H:i" }}</td>
+                    <td class="py-4 px-6 text-center">
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold 
+                            {% if lot.status == 'OUVERT' %}bg-green-100 text-green-800
+                            {% else %}bg-red-100 text-red-800{% endif %}">
+                            {{ lot.get_status_display }}
+                        </span>
+                    </td>
+                    <td class="py-4 px-6 text-center">
+                        <div class="flex items-center justify-center space-x-3">
+                            <a href="{% url 'ts_company:lot_detail' lot.pk %}" class="text-blue-500 hover:text-blue-700 transform hover:scale-110 transition duration-150 ease-in-out" title="Voir Détail">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                            </a>
+                            <a href="{% url 'ts_company:edit_lot' lot.pk %}" class="text-yellow-500 hover:text-yellow-700 transform hover:scale-110 transition duration-150 ease-in-out" title="Modifier">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                            </a>
+                            <a href="{% url 'ts_company:close_lot' lot.pk %}" class="text-red-500 hover:text-red-700 transform hover:scale-110 transition duration-150 ease-in-out" title="Fermer/Expédier">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="py-4 px-6 text-center text-gray-500">Aucun lot trouvé.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

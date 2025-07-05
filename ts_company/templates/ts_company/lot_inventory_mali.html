@@ -1,0 +1,48 @@
+{% extends 'layouts/mali_agent_layout.html' %}
+
+{% block mali_agent_content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-6 text-gray-800">Inventaire des Lots (Agent Mali)</h1>
+
+    <div class="bg-white shadow-md rounded-xl overflow-hidden mb-10">
+        <table class="min-w-full leading-normal">
+            <thead>
+                <tr class="bg-gray-100 text-gray-600 uppercase text-sm font-semibold border-b border-gray-200">
+                    <th class="py-3 px-6 text-left">Numéro de Lot</th>
+                    <th class="py-3 px-6 text-left">Date Expédition</th>
+                    <th class="py-3 px-6 text-left">Colis Total</th>
+                    <th class="py-3 px-6 text-left">Colis Réceptionnés</th>
+                    <th class="py-3 px-6 text-left">État de Réception</th>
+                    <th class="py-3 px-6 text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="text-gray-700 text-sm">
+                {% for item in inventory_data %}
+                <tr class="border-b border-gray-200 hover:bg-gray-50">
+                    <td class="py-4 px-6 whitespace-nowrap">{{ item.lot.numero_lot }}</td>
+                    <td class="py-4 px-6 whitespace-nowrap">{{ item.lot.date_expedition|date:"d M Y H:i" }}</td>
+                    <td class="py-4 px-6">{{ item.total_colis }}</td>
+                    <td class="py-4 px-6">{{ item.colis_receptionnes }}</td>
+                    <td class="py-4 px-6 whitespace-nowrap">
+                        {% if item.all_received %}
+                            <span class="px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">Complet</span>
+                        {% else %}
+                            <span class="px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800">Partiel</span>
+                        {% endif %}
+                    </td>
+                    <td class="py-4 px-6 text-center">
+                        <a href="{% url 'ts_company:lot_detail_mali' item.lot.pk %}" class="text-blue-500 hover:text-blue-700 transform hover:scale-110 transition duration-150 ease-in-out" title="Voir Détail du Lot">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="py-4 px-6 text-center text-gray-500">Aucun lot trouvé.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

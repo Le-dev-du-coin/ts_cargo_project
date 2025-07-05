@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center bg-gray-100">
+    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+        {% block auth_content %}
+            {# Le contenu spécifique de la page d'authentification viendra ici #}
+        {% endblock %}
+    </div>
+</div>
+{% endblock %}

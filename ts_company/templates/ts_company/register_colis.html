@@ -1,0 +1,246 @@
+{% extends 'layouts/agent_layout.html' %}
+
+{% block agent_content %}
+<div class="container mx-auto px-4 py-8 max-w-lg">
+    <h1 class="text-2xl font-bold mb-4 text-center">Enregistrer un nouveau Colis</h1>
+    <div class="bg-white shadow-xl rounded-lg my-6 p-8">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="grid grid-cols-1 gap-6">
+                <div class="mb-4">
+                    <label for="id_client_phone" class="block text-gray-700 text-sm font-bold mb-2">Numéro de Téléphone Client</label>
+                    <input type="text" id="id_client_phone" name="client_phone" list="client_suggestions" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Saisir le numéro de téléphone" autocomplete="off">
+                    <datalist id="client_suggestions"></datalist>
+                    <input type="hidden" id="id_client" name="client" value="">
+                    <p id="client_full_name" class="text-gray-600 text-sm mt-2"></p>
+                    {% for error in form.client.errors %}
+                        <p class="text-red-500 text-xs italic">{{ error }}</p>
+                    {% endfor %}
+                </div>
+                <div class="mb-4">
+                    <label for="{{ form.shipping_method.id_for_label }}" class="block text-gray-700 text-sm font-bold mb-2">{{ form.shipping_method.label }}</label>
+                    {{ form.shipping_method }}
+                    {% for error in form.shipping_method.errors %}
+                        <p class="text-red-500 text-xs italic">{{ error }}</p>
+                    {% endfor %}
+                </div>
+                <div class="mb-4">
+                    <label for="{{ form.lot.id_for_label }}" class="block text-gray-700 text-sm font-bold mb-2">{{ form.lot.label }}</label>
+                    {{ form.lot }}
+                    {% for error in form.lot.errors %}
+                        <p class="text-red-500 text-xs italic">{{ error }}</p>
+                    {% endfor %}
+                </div>
+                <div id="field-poids" class="mb-4">
+                    <label for="{{ form.poids.id_for_label }}" class="block text-gray-700 text-sm font-bold mb-2">{{ form.poids.label }}</label>
+                    {{ form.poids }}
+                    {% for error in form.poids.errors %}
+                        <p class="text-red-500 text-xs italic">{{ error }}</p>
+                    {% endfor %}
+                </div>
+                <div id="field-longueur" class="mb-4">
+                    <label for="{{ form.longueur.id_for_label }}" class="block text-gray-700 text-sm font-bold mb-2">{{ form.longueur.label }}</label>
+                    {{ form.longueur }}
+                    {% for error in form.longueur.errors %}
+                        <p class="text-red-500 text-xs italic">{{ error }}</p>
+                    {% endfor %}
+                </div>
+                <div id="field-largeur" class="mb-4">
+                    <label for="{{ form.largeur.id_for_label }}" class="block text-gray-700 text-sm font-bold mb-2">{{ form.largeur.label }}</label>
+                    {{ form.largeur }}
+                    {% for error in form.largeur.errors %}
+                        <p class="text-red-500 text-xs italic">{{ error }}</p>
+                    {% endfor %}
+                </div>
+                <div id="field-hauteur" class="mb-4">
+                    <label for="{{ form.hauteur.id_for_label }}" class="block text-gray-700 text-sm font-bold mb-2">{{ form.hauteur.label }}</label>
+                    {{ form.hauteur }}
+                    {% for error in form.hauteur.errors %}
+                        <p class="text-red-500 text-xs italic">{{ error }}</p>
+                    {% endfor %}
+                </div>
+                <div class="mb-4">
+                    <label for="{{ form.description.id_for_label }}" class="block text-gray-700 text-sm font-bold mb-2">{{ form.description.label }}</label>
+                    {{ form.description }}
+                    {% for error in form.description.errors %}
+                        <p class="text-red-500 text-xs italic">{{ error }}</p>
+                    {% endfor %}
+                </div>
+                <div class="mb-4">
+                    <label for="{{ form.delivery_address.id_for_label }}" class="block text-gray-700 text-sm font-bold mb-2">{{ form.delivery_address.label }}</label>
+                    {{ form.delivery_address }}
+                    {% for error in form.delivery_address.errors %}
+                        <p class="text-red-500 text-xs italic">{{ error }}</p>
+                    {% endfor %}
+                </div>
+                <div class="mb-4">
+                    <label for="{{ form.image.id_for_label }}" class="block text-gray-700 text-sm font-bold mb-2">{{ form.image.label }}</label>
+                    {{ form.image }}
+                    {% for error in form.image.errors %}
+                        <p class="text-red-500 text-xs italic">{{ error }}</p>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="flex items-center justify-between mt-6">
+                <button type="submit" class="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                    Enregistrer le Colis
+                </button>
+            </div>
+            <div class="text-center mt-4">
+                 <a href="{% url 'ts_company:china_agent_dashboard' %}" class="inline-block align-baseline font-bold text-sm text-gray-600 hover:text-gray-800">
+                    Annuler
+                </a>
+            </div>
+            {% if messages %}
+                <ul class="messages mt-4">
+                    {% for message in messages %}
+                        <li{% if message.tags %} class="{{ message.tags }} text-red-500 text-xs italic"{% endif %}>{{ message }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const shippingMethod = document.getElementById('id_shipping_method');
+    const poidsField = document.getElementById('field-poids');
+    const longueurField = document.getElementById('field-longueur');
+    const largeurField = document.getElementById('field-largeur');
+    const hauteurField = document.getElementById('field-hauteur');
+
+    function toggleFields() {
+        if (shippingMethod.value === 'MARITIME') {
+            poidsField.style.display = 'none';
+            longueurField.style.display = 'block';
+            largeurField.style.display = 'block';
+            hauteurField.style.display = 'block';
+        } else {
+            poidsField.style.display = 'block';
+            longueurField.style.display = 'none';
+            largeurField.style.display = 'none';
+            hauteurField.style.display = 'none';
+        }
+    }
+
+    // Initial check
+    toggleFields();
+
+    // Event listener for shipping method
+    shippingMethod.addEventListener('change', toggleFields);
+
+    // --- Client Search and Address Pre-fill ---
+    const clientPhoneInput = document.getElementById('id_client_phone');
+    const clientIdInput = document.getElementById('id_client');
+    const clientSuggestionsDatalist = document.getElementById('client_suggestions');
+    const clientFullNameDisplay = document.getElementById('client_full_name');
+    const deliveryAddressInput = document.getElementById('id_delivery_address');
+
+    let debounceTimer;
+
+    function fetchClientSuggestions(query) {
+        if (query.length < 2) { // Only search if query is at least 2 characters
+            clientSuggestionsDatalist.innerHTML = '';
+            return;
+        }
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+            fetch(`/ts_company/api/search_clients/?q=${query}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.text(); // Get raw text to debug JSON parsing
+                })
+                .then(text => {
+                    console.log('Raw response for client suggestions:', text);
+                    const data = JSON.parse(text);
+                    clientSuggestionsDatalist.innerHTML = '';
+                    data.clients.forEach(client => {
+                        const option = document.createElement('option');
+                        option.value = client.phone_number; // Display phone number in input
+                        option.setAttribute('data-client-id', client.id);
+                        option.setAttribute('data-full-name', client.full_name);
+                        option.textContent = `${client.full_name} (${client.phone_number})`; // Display full name and phone in datalist
+                        clientSuggestionsDatalist.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching client suggestions:', error));
+        }, 300); // Debounce for 300ms
+    }
+
+    function updateClientInfo(selectedPhoneNumber) {
+        const selectedOption = Array.from(clientSuggestionsDatalist.options).find(
+            option => option.value === selectedPhoneNumber
+        );
+
+        if (selectedOption) {
+            const clientId = selectedOption.getAttribute('data-client-id');
+            const fullName = selectedOption.getAttribute('data-full-name');
+            clientIdInput.value = clientId;
+            clientFullNameDisplay.textContent = `Client: ${fullName}`;
+            fetchClientAddress(clientId);
+        } else {
+            clientIdInput.value = '';
+            clientFullNameDisplay.textContent = '';
+            deliveryAddressInput.value = '';
+        }
+    }
+
+    function fetchClientAddress(clientId) {
+        if (clientId) {
+            fetch(`/ts_company/api/get_client_address/${clientId}/`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.address) {
+                        deliveryAddressInput.value = data.address;
+                    } else {
+                        deliveryAddressInput.value = ''; // Clear if no address found
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching client address:', error);
+                    deliveryAddressInput.value = ''; // Clear on error
+                });
+        } else {
+            deliveryAddressInput.value = ''; // Clear if no client selected
+        }
+    }
+
+    clientPhoneInput.addEventListener('input', function() {
+        fetchClientSuggestions(this.value);
+    });
+
+    clientPhoneInput.addEventListener('change', function() {
+        // When user selects from datalist or types a full match
+        updateClientInfo(this.value);
+    });
+
+    // Initial check if a client is pre-selected (e.g., on form error)
+    if (clientIdInput.value) {
+        // If there's an initial client ID, fetch its full name and address
+        fetch(`/api/get_client_address/${clientIdInput.value}/`)
+            .then(response => response.json())
+            .then(data => {
+                // Assuming get_client_address can also return full name if needed, or fetch separately
+                // For now, just pre-fill address
+                if (data.address) {
+                    deliveryAddressInput.value = data.address;
+                }
+            })
+            .catch(error => console.error('Error fetching initial client address:', error));
+
+        // You might need another API call to get the full name if not available in get_client_address
+        // For simplicity, let's assume the form submission will handle displaying the name if valid.
+    }
+});
+</script>
+{% endblock %}
