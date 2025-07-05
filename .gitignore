@@ -33,3 +33,6 @@ theme/static_src/package-lock.json
 *.log
 *.pot
 local_settings.py
+
+# Debookm
+debookm
