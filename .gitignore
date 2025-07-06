@@ -36,3 +36,4 @@ local_settings.py
 
 # Debookm
 debookm
+deploy.sh
